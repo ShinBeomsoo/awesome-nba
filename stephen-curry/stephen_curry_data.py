@@ -5,14 +5,27 @@ import requests
 
 
 curry_profile = requests.get(
-    "https://www.nba.com/player/201939/stephen-curry/profile"
-)
-html = curry_profile.text
-
-soup = BeautifulSoup(html, "html.parser")
-a = soup.select(
-    "#__next > div.Layout_withNav__2ED2- > div.max-w-screen-xl.mx-auto.p-0.md\:p-7.xxl\:px-0 > section:nth-child(2) > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(4)"
+    "https://www.basketball-reference.com/players/c/curryst01/gamelog/2021"
 )
 
-pprint(a)
+def get_stat_data(data_stat: str):
+    result = []
+    html = curry_profile.text
+    soup = BeautifulSoup(html, "html.parser")
+    points = soup.find_all(attrs={"data-stat": data_stat})
+    for point in points:
+        try:
+            result.append(int(point.string))
+        except ValueError:
+            pass
+    return result
 
+
+
+a = get_stat_data("pts")
+print("PTS: ", a)
+print("PTS average: ", sum(a)/len(a))
+
+a = get_stat_data("fg3")
+print("3pa: ", a)
+print("3pa average:: ", sum(a)/len(a))
